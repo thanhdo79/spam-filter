@@ -1,0 +1,18 @@
+# Moi truong ao va cache Python
+.venv/
+__pycache__/
+*.pyc
+
+# Bi mat, cau hinh ca nhan
+.env
+
+# Du lieu va mo hinh nang (khong day len Git)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/
+*.wav
+*.mp3
+*.pt
+*.bin
+models/
+mlruns/
