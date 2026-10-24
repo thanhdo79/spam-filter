@@ -1,0 +1,28 @@
+﻿============================================================
+Co so 1: luon doan ham
+Ma tran nham lan (hang = that, cot = du doan, thu tu: ham, spam):
+[[678   0]
+ [ 98   0]]
+              precision    recall  f1-score   support
+
+         ham      0.874     1.000     0.933       678
+        spam      0.000     0.000     0.000        98
+
+    accuracy                          0.874       776
+   macro avg      0.437     0.500     0.466       776
+weighted avg      0.763     0.874     0.815       776
+
+============================================================
+Co so 2: TF-IDF + Logistic Regression
+Ma tran nham lan (hang = that, cot = du doan, thu tu: ham, spam):
+[[666  12]
+ [  6  92]]
+              precision    recall  f1-score   support
+
+         ham      0.991     0.982     0.987       678
+        spam      0.885     0.939     0.911        98
+
+    accuracy                          0.977       776
+   macro avg      0.938     0.961     0.949       776
+weighted avg      0.978     0.977     0.977       776
+
