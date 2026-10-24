@@ -1,0 +1,16 @@
+nhan_that,text,svm,distilbert
+spam,Missed call alert. These numbers called but left no message. 07008009200,ham,spam
+ham,Message:some text missing* Sender:Name Missing* *Number Missing *Sent:Date missing *Missing U a lot thats y everything is missing sent via fullonsms.com,ham,spam
+spam,"Xmas & New Years Eve tickets are now on sale from the club, during the day from 10am till 8pm, and on Thurs, Fri & Sat night this week. They're selling fast!",spam,ham
+spam,Money i have won wining number 946 wot do i do next,ham,ham
+spam,Dear Voucher Holder 2 claim your 1st class airport lounge passes when using Your holiday voucher call 08704439680. When booking quote 1st class x 2,ham,spam
+spam,Hello. We need some posh birds and chaps to user trial prods for champneys. Can i put you down? I need your address and dob asap. Ta r,ham,ham
+ham,Total video converter free download type this in google search:),spam,spam
+ham,Ok... Ur typical reply...,spam,ham
+ham,Nokia phone is lovly..,spam,ham
+ham,Are you free now?can i call now?,spam,ham
+spam,"In The Simpsons Movie released in July 2007 name the band that died at the start of the film? A-Green Day, B-Blue Day, C-Red Day. (Send A, B or C)",ham,ham
+spam,ASKED 3MOBILE IF 0870 CHATLINES INCLU IN FREE MINS. INDIA CUST SERVs SED YES. L8ER GOT MEGA BILL. 3 DONT GIV A SHIT. BAILIFF DUE IN DAYS. I O £250 3 WANT £800,ham,spam
+spam,RECPT 1/3. You have ordered a Ringtone. Your order is being processed...,spam,ham
+ham,I (Career Tel) have added u as a contact on INDYAROCKS.COM to send FREE SMS. To remove from phonebook - sms NO to  &lt;#&gt;,spam,spam
+spam,ringtoneking 84484,ham,spam
