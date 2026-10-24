@@ -3,3 +3,4 @@ TF-IDF + LogReg,0.885,0.939,0.911,12,6,0.078
 TF-IDF + SVM (tuyen tinh),0.948,0.929,0.938,5,7,0.059
 TF-IDF + Random Forest,0.988,0.827,0.9,1,17,0.617
 Bi-GRU (tu dien rieng),0.958,0.929,0.943,4,7,38.683
+DistilBERT (tinh chinh),0.969,0.949,0.959,3,5,163.566
