@@ -8,7 +8,8 @@ from typing import Literal
 
 import numpy as np
 import onnxruntime as ort
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from tokenizers import Tokenizer
 
@@ -16,6 +17,7 @@ THU_MUC_MO_HINH = Path(os.getenv("THU_MUC_MO_HINH", "models"))
 DUONG_DAN_ONNX = THU_MUC_MO_HINH / "distilbert.onnx"
 DUONG_DAN_TOKENIZER = THU_MUC_MO_HINH / "distilbert" / "tokenizer.json"
 DUONG_DAN_DB = Path(os.getenv("DUONG_DAN_DB", "data/app.db"))
+DUONG_DAN_ADMIN = Path(__file__).parent / "static" / "admin.html"
 MAX_LEN = 64
 NGUONG_SPAM = 0.5  # xac suat spam >= nguong thi ket luan la spam
 
@@ -177,3 +179,26 @@ def stats():
         so_phan_hoi=int(r["so_phan_hoi"]),
         so_phan_hoi_cho_thay_sai=int(r["so_sai"]),
     )
+class BanGhi(BaseModel):
+    id: int
+    thoi_gian: str
+    text: str
+    label: str
+    spam_probability: float
+    nhan_dung: str | None = None
+
+
+@app.get("/recent", response_model=list[BanGhi])
+def recent(limit: int = Query(20, ge=1, le=200)):
+    with closing(ket_noi()) as conn:
+        rows = conn.execute(
+            "SELECT id, thoi_gian, text, label, spam_probability, nhan_dung "
+            "FROM du_doan ORDER BY id DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+    return [BanGhi(**dict(r)) for r in rows]
+
+
+@app.get("/admin", include_in_schema=False)
+def admin():
+    return FileResponse(DUONG_DAN_ADMIN)

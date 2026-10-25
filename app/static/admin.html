@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Anti-Spam - Trang quan tri</title>
+<style>
+  :root { --nen: #f5f6f8; --the: #ffffff; --chu: #1f2933; --phu: #616e7c;
+          --vien: #d9dee4; --spam: #b00020; --ham: #1b7f3b; --nhan: #2457c5; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: var(--nen); color: var(--chu);
+         font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  h1 { font-size: 1.3rem; margin: 0 0 16px; }
+  h2 { font-size: 1rem; margin: 0 0 10px; }
+  .luoi { display: grid; gap: 12px;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .the { background: var(--the); border: 1px solid var(--vien);
+         border-radius: 8px; padding: 12px; }
+  .so { font-size: 1.6rem; font-weight: 700; }
+  .nhan-the { color: var(--phu); font-size: 0.8rem; }
+  .khung { margin-top: 16px; }
+  .thanh { height: 14px; background: var(--ham); border-radius: 7px;
+           overflow: hidden; }
+  #thanh-spam { height: 100%; width: 0; background: var(--spam); }
+  textarea { width: 100%; min-height: 70px; padding: 8px; font: inherit;
+             border: 1px solid var(--vien); border-radius: 6px; }
+  button { font: inherit; cursor: pointer; padding: 6px 10px; margin: 2px;
+           border: 1px solid var(--vien); border-radius: 6px;
+           background: var(--the); color: var(--chu); }
+  button.chinh { background: var(--nhan); color: #fff; border-color: var(--nhan); }
+  .cuon { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--vien);
+           vertical-align: top; }
+  .noi-dung { max-width: 420px; word-break: break-word; }
+  .spam { color: var(--spam); font-weight: 600; }
+  .ham { color: var(--ham); font-weight: 600; }
+  #loi { color: var(--spam); margin-top: 8px; }
+  @media (prefers-color-scheme: dark) {
+    :root { --nen: #12161b; --the: #1c232b; --chu: #e6eaee; --phu: #9aa5b1;
+            --vien: #333d48; --spam: #ff6b81; --ham: #4cd07d; --nhan: #5b8def; }
+  }
+</style>
+</head>
+<body>
+  <h1>Smart Anti-Spam - Trang quan tri</h1>
+
+  <div class="luoi">
+    <div class="the"><div class="so" id="tong">0</div>
+      <div class="nhan-the">Tong so tin da kiem tra</div></div>
+    <div class="the"><div class="so" id="so-spam">0</div>
+      <div class="nhan-the">Tin spam</div></div>
+    <div class="the"><div class="so" id="so-ham">0</div>
+      <div class="nhan-the">Tin binh thuong (ham)</div></div>
+    <div class="the"><div class="so" id="ty-le">0%</div>
+      <div class="nhan-the">Ty le spam</div></div>
+    <div class="the"><div class="so" id="do-tre">0</div>
+      <div class="nhan-the">Do tre trung binh (ms)</div></div>
+    <div class="the"><div class="so" id="phan-hoi">0</div>
+      <div class="nhan-the">So phan hoi da nhan</div></div>
+    <div class="the"><div class="so" id="sai">0</div>
+      <div class="nhan-the">Phan hoi cho thay mo hinh sai</div></div>
+  </div>
+
+  <div class="the khung">
+    <h2>Ti le spam / ham</h2>
+    <div class="thanh"><div id="thanh-spam"></div></div>
+    <div class="nhan-the">Phan do = spam, phan xanh = ham</div>
+  </div>
+
+  <div class="the khung">
+    <h2>Thu kiem tra mot tin nhan</h2>
+    <textarea id="o-nhap" placeholder="Nhap noi dung tin nhan (tieng Anh)..."></textarea>
+    <button class="chinh" id="nut-kiem-tra">Kiem tra</button>
+    <div id="ket-qua"></div>
+  </div>
+
+  <div class="the khung">
+    <h2>20 du doan gan nhat (bam nut de bao nhan dung)</h2>
+    <div class="cuon">
+      <table>
+        <thead><tr><th>ID</th><th>Thoi gian</th><th>Noi dung</th>
+          <th>Du doan</th><th>Xac suat spam</th><th>Nhan da bao</th>
+          <th>Bao nhan dung</th></tr></thead>
+        <tbody id="bang"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="loi"></div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  async function goiApi(duongDan, tuyChon) {
+    const res = await fetch(duongDan, tuyChon);
+    if (!res.ok) throw new Error(duongDan + " tra ve loi " + res.status);
+    return res.json();
+  }
+
+  function guiJson(phuongThuc, noiDung) {
+    return {
+      method: phuongThuc,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(noiDung),
+    };
+  }
+
+  async function taiThongKe() {
+    const s = await goiApi("/stats");
+    $("tong").textContent = s.tong;
+    $("so-spam").textContent = s.so_spam;
+    $("so-ham").textContent = s.so_ham;
+    $("ty-le").textContent = (s.ty_le_spam * 100).toFixed(1) + "%";
+    $("do-tre").textContent = s.latency_tb_ms;
+    $("phan-hoi").textContent = s.so_phan_hoi;
+    $("sai").textContent = s.so_phan_hoi_cho_thay_sai;
+    $("thanh-spam").style.width = (s.ty_le_spam * 100) + "%";
+  }
+
+  // Luon dung textContent (khong dung innerHTML) de tranh loi XSS
+  function taoO(noiDung, lop) {
+    const td = document.createElement("td");
+    td.textContent = noiDung;
+    if (lop) td.className = lop;
+    return td;
+  }
+
+  async function taiDanhSach() {
+    const ds = await goiApi("/recent?limit=20");
+    const tbody = $("bang");
+    tbody.replaceChildren();
+    for (const r of ds) {
+      const tr = document.createElement("tr");
+      tr.appendChild(taoO(r.id));
+      tr.appendChild(taoO(r.thoi_gian.replace("T", " ").replace("+00:00", " UTC")));
+      const rutGon = r.text.length > 120 ? r.text.slice(0, 120) + "..." : r.text;
+      tr.appendChild(taoO(rutGon, "noi-dung"));
+      tr.appendChild(taoO(r.label, r.label));
+      tr.appendChild(taoO(r.spam_probability.toFixed(3)));
+      tr.appendChild(taoO(r.nhan_dung ?? "-"));
+      const tdNut = document.createElement("td");
+      for (const nhan of ["ham", "spam"]) {
+        const nut = document.createElement("button");
+        nut.textContent = "Dung la " + nhan;
+        nut.onclick = () => guiPhanHoi(r.id, nhan);
+        tdNut.appendChild(nut);
+      }
+      tr.appendChild(tdNut);
+      tbody.appendChild(tr);
+    }
+  }
+
+  async function lamMoi() {
+    try {
+      await Promise.all([taiThongKe(), taiDanhSach()]);
+      $("loi").textContent = "";
+    } catch (e) {
+      $("loi").textContent = "Loi: " + e.message;
+    }
+  }
+
+  async function guiPhanHoi(id, nhan) {
+    try {
+      await goiApi("/feedback", guiJson("POST", { id: id, correct_label: nhan }));
+      await lamMoi();
+    } catch (e) {
+      $("loi").textContent = "Loi: " + e.message;
+    }
+  }
+
+  async function kiemTra() {
+    const noiDung = $("o-nhap").value.trim();
+    if (!noiDung) { $("ket-qua").textContent = "Hay nhap noi dung truoc."; return; }
+    try {
+      const kq = await goiApi("/predict", guiJson("POST", { text: noiDung }));
+      $("ket-qua").textContent = "Ket qua: " + kq.label.toUpperCase() +
+        " (xac suat spam " + kq.spam_probability + ", " + kq.latency_ms + " ms, id " + kq.id + ")";
+      await lamMoi();
+    } catch (e) {
+      $("loi").textContent = "Loi: " + e.message;
+    }
+  }
+
+  $("nut-kiem-tra").onclick = kiemTra;
+  lamMoi();
+  setInterval(lamMoi, 5000);
+</script>
+</body>
+</html>
