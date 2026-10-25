@@ -16,3 +16,4 @@ data/processed/
 *.bin
 models/
 mlruns/
+*.db
