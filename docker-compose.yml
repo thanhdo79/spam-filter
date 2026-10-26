@@ -1,0 +1,12 @@
+services:
+  api:
+    build: .
+    image: spam-filter-api:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mo hinh gan o che do chi doc (:ro)
+      - ./models:/srv/models:ro
+      # Co so du lieu luu ben ngoai de khong mat khi xoa container
+      - ./data/docker:/srv/data
+    restart: unless-stopped

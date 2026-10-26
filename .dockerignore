@@ -1,0 +1,10 @@
+.venv
+.git
+.gitignore
+data
+models
+reports
+src
+__pycache__
+*.pyc
+.env
