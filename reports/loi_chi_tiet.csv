@@ -1,0 +1,18 @@
+﻿split,label,p_spam,loai_loi,do_dai,co_day_so_dai,co_url,co_ky_hieu_tien,nhieu_chu_hoa,text
+test,spam,0.0009503139,FN-chac chan,40,False,False,False,False,RCT' THNQ Adrian for U text. Rgds Vatian
+test,spam,0.004098744,FN-chac chan,84,False,False,False,False,Would you like to see my XXX pics they are so hot they were nearly banned in the uk!
+test,spam,0.010059498,FN-chac chan,136,False,False,False,False,"New Tones This week include: 1)McFly-All Ab.., 2) Sara Jorge-Shock.. 3) Will Smith-Switch.. To order follow instructions on next message"
+test,spam,0.029893903,FN-chac chan,106,False,False,True,False,"Oh my god! I've found your number again! I'm so glad, text me back xafter this msgs cst std ntwk chg £1.50"
+test,spam,0.10647574,FN-luong lu,70,False,False,False,False,"Latest News! Police station toilet stolen, cops have nothing to go on!"
+test,spam,0.1138662,FN-luong lu,69,False,False,False,False,Check Out Choose Your Babe Videos @ sms.shsex.netUN fgkslpoPW fgkslpo
+test,spam,0.2194442,FN-luong lu,141,False,False,False,False,Burger King - Wanna play footy at a top stadium? Get 2 Burger King before 1st Sept and go Large or Super with Coca-Cola and walk out a winner
+test,spam,0.2476308,FN-luong lu,152,False,False,False,False,Babe: U want me dont u baby! Im nasty and have a thing 4 filthyguys. Fancy a rude time with a sexy bitch. How about we go slo n hard! Txt XXX SLO(4msgs)
+test,ham,0.97179013,FP-chac chan,159,False,False,False,False,"Please protect yourself from e-threats. SIB never asks for sensitive information like Passwords,ATM/SMS PIN thru email. Never share your password with anybody."
+val,spam,0.0009446168,FN-chac chan,51,False,False,False,False,Money i have won wining number 946 wot do i do next
+val,spam,0.0010521606,FN-chac chan,134,False,False,False,False,Hello. We need some posh birds and chaps to user trial prods for champneys. Can i put you down? I need your address and dob asap. Ta r
+val,spam,0.004089398,FN-chac chan,72,False,False,False,False,RECPT 1/3. You have ordered a Ringtone. Your order is being processed...
+val,spam,0.005563191,FN-chac chan,157,False,False,False,False,"Xmas & New Years Eve tickets are now on sale from the club, during the day from 10am till 8pm, and on Thurs, Fri & Sat night this week. They're selling fast!"
+val,spam,0.056804933,FN-chac chan,146,False,False,False,False,"In The Simpsons Movie released in July 2007 name the band that died at the start of the film? A-Green Day, B-Blue Day, C-Red Day. (Send A, B or C)"
+val,ham,0.91127855,FP-chac chan,152,False,True,False,False,Message:some text missing* Sender:Name Missing* *Number Missing *Sent:Date missing *Missing U a lot thats y everything is missing sent via fullonsms.com
+val,ham,0.9141254,FP-chac chan,124,False,True,False,False,I (Career Tel) have added u as a contact on INDYAROCKS.COM to send FREE SMS. To remove from phonebook - sms NO to  &lt;#&gt;
+val,ham,0.97703743,FP-chac chan,64,False,False,False,False,Total video converter free download type this in google search:)
