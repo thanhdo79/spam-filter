@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 
 from app import main
 
+from prometheus_client import REGISTRY
 
 class GiaTokenizer:
     """Bo tach tu gia: danh dau ids[1] = 1 neu tin co chu 'free'."""
@@ -145,3 +146,23 @@ def test_admin_khong_chen_html_nguy_hiem(client):
     cam = [".innerHTML", ".outerHTML", "insertAdjacentHTML", "document.write"]
     for cach in cam:
         assert cach not in trang, f"Trang dang dung {cach}"
+
+def gia_tri(ten, nhan=None):
+    """Doc gia tri hien tai cua mot so lieu Prometheus (0 neu chua co)."""
+    return REGISTRY.get_sample_value(ten, nhan or {}) or 0.0
+
+
+def test_metrics_dem_so_du_doan(client):
+    truoc = gia_tri("spam_predictions_total", {"label": "spam"})
+    gui_du_doan(client, TIN_SPAM)
+    assert gia_tri("spam_predictions_total", {"label": "spam"}) == truoc + 1
+    r = client.get("/metrics")
+    assert r.status_code == 200
+    assert "spam_predictions_total" in r.text
+
+
+def test_metrics_dem_phan_hoi_sai(client):
+    truoc = gia_tri("spam_feedback_total", {"ket_qua": "sai"})
+    id_tin = gui_du_doan(client, TIN_SPAM).json()["id"]  # mo hinh gia doan spam
+    client.post("/feedback", json={"id": id_tin, "correct_label": "ham"})
+    assert gia_tri("spam_feedback_total", {"ket_qua": "sai"}) == truoc + 1

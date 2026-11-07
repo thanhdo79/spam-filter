@@ -4,3 +4,4 @@ onnxruntime==1.31.0
 pydantic==2.14.1
 tokenizers==0.23.3
 uvicorn==0.54.0
+prometheus_client==0.26.0

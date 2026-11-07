@@ -8,8 +8,10 @@ from typing import Literal
 
 import numpy as np
 import onnxruntime as ort
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.responses import FileResponse
+from prometheus_client import (CONTENT_TYPE_LATEST, Counter, Histogram,
+                               generate_latest)
 from pydantic import BaseModel, Field
 from tokenizers import Tokenizer
 
@@ -23,6 +25,22 @@ NGUONG_SPAM = 0.5  # xac suat spam >= nguong thi ket luan la spam
 
 # Luu mo hinh da nap de moi yeu cau dung lai
 TRANG_THAI = {}
+
+# ---------- So lieu giam sat (Prometheus) ----------
+SO_DU_DOAN = Counter(
+    "spam_predictions_total", "So tin da phan loai, chia theo nhan", ["label"])
+THOI_GIAN_SUY_LUAN = Histogram(
+    "spam_inference_seconds", "Thoi gian tach tu + suy luan ONNX (giay)",
+    buckets=(0.005, 0.01, 0.02, 0.03, 0.05, 0.1, 0.25, 0.5, 1.0))
+SO_PHAN_HOI = Counter(
+    "spam_feedback_total",
+    "So phan hoi cua nguoi dung, chia theo mo hinh dung hay sai", ["ket_qua"])
+SO_YEU_CAU_HTTP = Counter(
+    "spam_http_requests_total", "So yeu cau HTTP",
+    ["duong_dan", "phuong_thuc", "ma_trang_thai"])
+THOI_GIAN_HTTP = Histogram(
+    "spam_http_request_seconds", "Thoi gian xu ly yeu cau HTTP (giay)",
+    ["duong_dan"])
 
 
 def tao_tokenizer(duong_dan):
@@ -79,6 +97,21 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Smart Anti-Spam API", lifespan=lifespan)
 
 
+@app.middleware("http")
+async def do_yeu_cau_http(request: Request, call_next):
+    """Do moi yeu cau HTTP: dem so luong va do thoi gian xu ly."""
+    t0 = time.perf_counter()
+    response = await call_next(request)
+    route = request.scope.get("route")
+    # Dung mau duong dan (vd /predict) thay vi dia chi that de so lieu khong phinh ra
+    duong_dan = route.path if route else "khac"
+    if duong_dan != "/metrics":
+        SO_YEU_CAU_HTTP.labels(
+            duong_dan, request.method, str(response.status_code)).inc()
+        THOI_GIAN_HTTP.labels(duong_dan).observe(time.perf_counter() - t0)
+    return response
+
+
 class YeuCau(BaseModel):
     text: str = Field(min_length=1, max_length=2000)
 
@@ -105,6 +138,15 @@ class ThongKe(BaseModel):
     so_phan_hoi_cho_thay_sai: int
 
 
+class BanGhi(BaseModel):
+    id: int
+    thoi_gian: str
+    text: str
+    label: str
+    spam_probability: float
+    nhan_dung: str | None = None
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "model_loaded": "session" in TRANG_THAI}
@@ -124,7 +166,9 @@ def predict(yeu_cau: YeuCau):
     p_spam = float(e[1] / e.sum())
     nhan = "spam" if p_spam >= NGUONG_SPAM else "ham"
     # do tre chi tinh phan tach tu + suy luan, khong tinh ghi co so du lieu
-    do_tre = round((time.perf_counter() - t0) * 1000, 2)
+    giay_suy_luan = time.perf_counter() - t0
+    THOI_GIAN_SUY_LUAN.observe(giay_suy_luan)
+    do_tre = round(giay_suy_luan * 1000, 2)
 
     with closing(ket_noi()) as conn:
         cur = conn.execute(
@@ -136,6 +180,7 @@ def predict(yeu_cau: YeuCau):
         conn.commit()
         id_moi = cur.lastrowid
 
+    SO_DU_DOAN.labels(nhan).inc()
     return KetQua(id=id_moi, label=nhan,
                   spam_probability=round(p_spam, 4), latency_ms=do_tre)
 
@@ -143,14 +188,19 @@ def predict(yeu_cau: YeuCau):
 @app.post("/feedback")
 def feedback(phan_hoi: PhanHoi):
     with closing(ket_noi()) as conn:
-        cur = conn.execute(
+        hang = conn.execute(
+            "SELECT label FROM du_doan WHERE id = ?", (phan_hoi.id,)
+        ).fetchone()
+        if hang is None:
+            raise HTTPException(status_code=404, detail="Khong tim thay id")
+        conn.execute(
             "UPDATE du_doan SET nhan_dung = ?, thoi_gian_phan_hoi = ? "
             "WHERE id = ?",
             (phan_hoi.correct_label, bay_gio(), phan_hoi.id),
         )
         conn.commit()
-        if cur.rowcount == 0:
-            raise HTTPException(status_code=404, detail="Khong tim thay id")
+    ket_qua = "dung" if hang["label"] == phan_hoi.correct_label else "sai"
+    SO_PHAN_HOI.labels(ket_qua).inc()
     return {"status": "da_ghi_nhan"}
 
 
@@ -179,13 +229,6 @@ def stats():
         so_phan_hoi=int(r["so_phan_hoi"]),
         so_phan_hoi_cho_thay_sai=int(r["so_sai"]),
     )
-class BanGhi(BaseModel):
-    id: int
-    thoi_gian: str
-    text: str
-    label: str
-    spam_probability: float
-    nhan_dung: str | None = None
 
 
 @app.get("/recent", response_model=list[BanGhi])
@@ -202,3 +245,9 @@ def recent(limit: int = Query(20, ge=1, le=200)):
 @app.get("/admin", include_in_schema=False)
 def admin():
     return FileResponse(DUONG_DAN_ADMIN)
+
+
+@app.get("/metrics", include_in_schema=False)
+def metrics():
+    """Prometheus goi dia chi nay moi 15 giay de lay so lieu."""
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)

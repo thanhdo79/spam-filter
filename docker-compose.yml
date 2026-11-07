@@ -10,3 +10,19 @@ services:
       # Co so du lieu luu ben ngoai de khong mat khi xoa container
       - ./data/docker:/srv/data
     restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    ports:
+      - "9090:9090"
+    volumes:
+      # Tep cau hinh gan o che do chi doc
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      # Kho luu so lieu theo thoi gian, giu lai khi khoi dong lai
+      - prometheus_data:/prometheus
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  prometheus_data:
