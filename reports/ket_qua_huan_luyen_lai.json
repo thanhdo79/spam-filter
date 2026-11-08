@@ -1,0 +1,57 @@
+{
+  "epoch_tot_nhat": 2,
+  "thoi_gian_hoc_giay": 171.2,
+  "val_uci": {
+    "precision": 0.9215686274509803,
+    "recall": 0.9591836734693877,
+    "f1": 0.94,
+    "fp": 8,
+    "fn": 4
+  },
+  "val_vi": {
+    "precision": 0.7058823529411765,
+    "recall": 1.0,
+    "f1": 0.8275862068965517,
+    "fp": 5,
+    "fn": 0
+  },
+  "val_gop": {
+    "precision": 0.8907563025210085,
+    "recall": 0.9636363636363636,
+    "f1": 0.925764192139738,
+    "fp": 13,
+    "fn": 4
+  },
+  "test_uci": {
+    "precision": 0.9223300970873787,
+    "recall": 0.9693877551020408,
+    "f1": 0.945273631840796,
+    "fp": 8,
+    "fn": 3
+  },
+  "f1_test_co_so": 0.952,
+  "bo_do_50_tong": {
+    "precision": 0.7096774193548387,
+    "recall": 1.0,
+    "f1": 0.8301886792452831,
+    "fp": 9,
+    "fn": 0
+  },
+  "bo_do_50_theo_ngon_ngu": {
+    "vi": {
+      "so_spam_that": 11,
+      "so_spam_bat_duoc": 11,
+      "so_ham_bi_chan_nham": 5
+    },
+    "en": {
+      "so_spam_that": 11,
+      "so_spam_bat_duoc": 11,
+      "so_ham_bi_chan_nham": 4
+    }
+  },
+  "dieu_kien": {
+    "a_bat_duoc_toi_thieu_spam_vi": true,
+    "b_f1_test_khong_giam_qua_muc": true,
+    "c_fp_bo_do_khong_tang_qua_muc": false
+  }
+}
