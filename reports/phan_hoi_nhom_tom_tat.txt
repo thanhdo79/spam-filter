@@ -1,4 +1,4 @@
 === MO HINH HIEN TAI TREN BO TIN NHOM TAO (moc truoc huan luyen lai) ===
-Tat ca: n=4 (spam that=2) | dung 2/4 | precision=0.000 recall=0.000 f1=0.000 | FP=0 FN=2
-Tieng Viet: n=2 (spam that=1) | dung 1/2 | precision=0.000 recall=0.000 f1=0.000 | FP=0 FN=1
-Tieng Anh: n=2 (spam that=1) | dung 1/2 | precision=0.000 recall=0.000 f1=0.000 | FP=0 FN=1
+Tat ca: n=50 (spam that=22) | dung 36/50 | precision=0.833 recall=0.455 f1=0.588 | FP=2 FN=12
+Tieng Viet: n=25 (spam that=11) | dung 14/25 | precision=0.000 recall=0.000 f1=0.000 | FP=0 FN=11
+Tieng Anh: n=25 (spam that=11) | dung 22/25 | precision=0.833 recall=0.909 f1=0.870 | FP=2 FN=1

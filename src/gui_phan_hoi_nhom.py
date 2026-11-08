@@ -58,6 +58,10 @@ print(f"Tong so tin: {len(df)}")
 print(df.groupby(["ngon_ngu", "label"]).size().to_string())
 if CHI_KIEM_TRA:
     sys.exit("\nChe do kiem tra: du lieu hop le, chua gui gi.")
+SO_TIN_TOI_THIEU = 30
+if len(df) < SO_TIN_TOI_THIEU:
+    sys.exit(f"Chi co {len(df)} tin, it hon muc toi thieu {SO_TIN_TOI_THIEU}. "
+             "Soan them tin truoc khi gui.")    
 
 # ---------- 2. Gui tung tin qua /predict roi /feedback ----------
 ket_qua = []
