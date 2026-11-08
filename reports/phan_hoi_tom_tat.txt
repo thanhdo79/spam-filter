@@ -1,0 +1,12 @@
+=== TOM TAT PHAN HOI NGUOI DUNG ===
+Tong so tin co phan hoi: 1
+Mo hinh du doan dung: 1 | du doan sai: 0
+
+So noi dung bi gan nhan xung dot (bi loai): 0
+So dong trung lap noi bo bi bo: 0
+Trung voi train (khong co thong tin moi): 0
+Trung voi val (cam dung de huan luyen): 0
+Trung voi test (cam dung de huan luyen): 0
+
+So tin sach con lai co the dung de huan luyen: 1
+Phan bo nhan: {'spam': 1}

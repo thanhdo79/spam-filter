@@ -17,3 +17,5 @@ data/processed/
 models/
 mlruns/
 *.db
+data/feedback/
+.pytest_cache/
