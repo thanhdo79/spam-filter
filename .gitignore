@@ -19,3 +19,5 @@ mlruns/
 *.db
 data/feedback/
 .pytest_cache/
+mlartifacts/
+mlruns/
