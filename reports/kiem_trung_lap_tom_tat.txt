@@ -1,0 +1,7 @@
+so_tin_train=120
+trung_y_het_bo_do=0
+trung_noi_bo=0
+nguong_giong=0.5
+so_tin_vuot_nguong=0
+do_giong_trung_binh=0.244
+do_giong_lon_nhat=0.481
